@@ -90,8 +90,9 @@ def load_server():
     # Gather all available servers
     load_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     load_socket.connect((HOST, PORT))
+    load_socket.sendall(b'roomrequest')
     open_hosts = load_socket.recv(1024)
-    print(open_hosts)
+    print(pickle.loads(open_hosts))
     
     # Destroy root
     root.destroy()
