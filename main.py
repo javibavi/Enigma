@@ -84,14 +84,14 @@ def load_server():
     join_window = Tk()
     join_window.geometry(f'{int(WIDTH/2)}x{int(HEIGHT/2)}')
     join_window.config(bg='#03001C')
-    join_window.title("Enigma Server Joining")
+    join_window.title("Enigma Server List")
     join_window.resizable(width=False, height=False)
     
     # Gather all available servers
     load_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     load_socket.connect((HOST, PORT))
-    #open_hosts = load_socket.recv(1024)
-    #print(pickle.loads(open_hosts))
+    open_hosts = load_socket.recv(1024)
+    print(open_hosts)
     
     # Destroy root
     root.destroy()
