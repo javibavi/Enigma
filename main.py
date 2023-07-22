@@ -2,7 +2,7 @@ from tkinter import *
 from os import getcwd
 from tkinter import messagebox
 import socket
-import pickle
+import pickle # used to encode/decode information before it is sent to the server 
 
 # Function for the host to submit their info
 def host_submit():
