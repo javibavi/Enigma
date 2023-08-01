@@ -1,1 +1,1 @@
-will update this later
+this is the command line interface version of enigma.

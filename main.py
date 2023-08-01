@@ -2,6 +2,7 @@ from tkinter import *
 from os import getcwd
 from tkinter import messagebox
 import socket
+import pickle # used to encode/decode information before it is sent to the server 
 
 # Function for the host to submit their info
 def host_submit():
@@ -9,13 +10,13 @@ def host_submit():
     # Gets the information from the entries and stores them as a list
     room = config_room_name_entry.get()
     password = config_password_entry.get()
-    host_info = [room, password]
+    host_info = pickle.dumps([room, password])
     
-    # If the room name is all whitespace characters or the password/room name is not within 16 characters it throws an error
-    if room.strip() == '' or len(room) > 16 or len(password) > 16:
+    # If the the password/room name is not within 16 characters it throws an error
+    if len(room) > 16 or len(password) > 16:
         messagebox.showerror(title="Error", message="Room name and password must not be longer than 16 characters")
     else:
-        # Otherwise it creates a socket to send all of the info to the server
+        # send room info to the server
         config_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         config_socket.connect((HOST, PORT))
         config_socket.sendall(host_info)
@@ -76,22 +77,22 @@ def config_server():
     
     
     
-def join_server():
+def load_server():
     
-    # Creating blank window to display all the servers
+    # Creating blank window to display all of the servers
     global join_window
     join_window = Tk()
     join_window.geometry(f'{int(WIDTH/2)}x{int(HEIGHT/2)}')
     join_window.config(bg='#03001C')
-    join_window.title("Enigma Server Joining")
+    join_window.title("Enigma Server List")
     join_window.resizable(width=False, height=False)
     
     # Gather all available servers
-    join_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    join_socket.connect((HOST, PORT))
-    open_hosts = join_socket.recv(2048)
-    for i in open_hosts:
-        print(open_hosts)
+    load_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    load_socket.connect((HOST, PORT))
+    load_socket.sendall(b'roomrequest')
+    open_hosts = load_socket.recv(1024)
+    print(pickle.loads(open_hosts))
     
     # Destroy root
     root.destroy()
@@ -186,10 +187,10 @@ def main():
                                 font=FONT, activebackground=TEXT_BG, activeforeground=TEXT_FG)
     create_server_button.place(relx=.5, rely=.2, anchor='center')
 
-    # Button for joining a server. Binded to join_server function
-    join_server_button = Button(root, text="JOIN A SERVER", command=join_server, fg=TEXT_FG, bg=TEXT_BG,
+    # Button for joining a server. Binded to load_server function
+    load_server_button = Button(root, text="JOIN A SERVER", command=load_server, fg=TEXT_FG, bg=TEXT_BG,
                                 font=FONT, activebackground=TEXT_BG, activeforeground=TEXT_FG)
-    join_server_button.place(relx=.5, rely=.4, anchor='center')
+    load_server_button.place(relx=.5, rely=.4, anchor='center')
 
     # Button for settings. Binded to settings function
     settings_button = Button(root, text="SETTINGS", command=settings, fg=TEXT_FG, bg=TEXT_BG,
