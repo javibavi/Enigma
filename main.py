@@ -3,6 +3,8 @@ from os import getcwd
 from tkinter import messagebox
 import socket
 import pickle # used to encode/decode information before it is sent to the server 
+from load_server_frames import *
+import threading
 
 # Function for the host to submit their info
 def host_submit():
@@ -27,6 +29,9 @@ def host_submit():
 
 # Function for configuring a new server
 def config_server():
+    
+    # Destroy root
+    root.destroy()
     
     # Creating window for creating a server
     global config_window
@@ -72,12 +77,54 @@ def config_server():
                           text="Back to home screen")
     back_to_home.pack()
     
-    # Destroy root
-    root.destroy()
+  
+
+
+# Function for loading the frames with server info that takes two parameters
+# starting_index is index the thread will start at
+# Column is the column the thread will target
+def load_frames(starting_index, column):
     
+    # We will use this to access items within our lists
+    index = starting_index
+    
+    # We will use this in case the loop iterates to an index that doesn't exist within our list
+    index_exists = True
+    
+    # Variable for iterating through each row
+    row = 0
+    
+    # While the index is within our list
+    while index_exists:
+        
+            try:
+                
+                # Create a new serverInfo object using the information from our index and the row and column variables
+                server_display = serverInfo(join_window, open_hosts[index], row, column)
+                
+                # Move the index three steps (There are three threads)
+                index +=3
+                
+                # Move to next row
+                row +=1
+                
+                # Update the screens
+                join_window.update_idletasks()
+                join_window.update()
+                
+            # In case of error, end the while loop
+            except Exception:
+                index_exists = False
+            
+            
+                 
+            
     
     
 def load_server():
+    
+    # Destroy root
+    root.destroy()
     
     # Creating blank window to display all of the servers
     global join_window
@@ -87,21 +134,48 @@ def load_server():
     join_window.title("Enigma Server List")
     join_window.resizable(width=False, height=False)
     
+    
+    
     # Gather all available servers
     load_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     load_socket.connect((HOST, PORT))
     load_socket.sendall(b'roomrequest')
+    
+    # Store open servers within a list 
+    global open_hosts
     open_hosts = load_socket.recv(1024)
     print(pickle.loads(open_hosts))
+    open_hosts = pickle.loads(open_hosts)
     
-    # Destroy root
-    root.destroy()
+    
+    
+    # Threads that target our function 
+    # They have to be daemon threads, otherwise the program will break
+    column_zero_thread = threading.Thread(target=load_frames, args=(1, 0), daemon=True)
+    column_one_thread = threading.Thread(target=load_frames, args=(2, 1), daemon=True)
+    column_two_thread = threading.Thread(target=load_frames, args=(3, 2), daemon=True)
+    
+    
+    # Starting the threads
+    column_zero_thread.start()
+    column_one_thread.start()
+    column_two_thread.start()
+    
+    
+    
+    # Mainloop because without this it breaks
+    join_window.mainloop()
+    
     
 
 # This function changes our username to whatever is within our username_entry
 def set_username():
-    global username
-    username = username_entry.get()
+    
+    if len(username_entry.get()) < 16:
+        global username
+        username = username_entry.get()
+    else:
+        messagebox.showerror(title="Error", message="The username entered was not within 16 characters")
     
 # Creates a separate window for settings
 def settings():
@@ -144,9 +218,7 @@ def main():
     except Exception:
         pass
     
-    # By default, this is the username
-    global username
-    username = "Anonymous"
+    
 
     # Creation of main window
     global root
@@ -158,19 +230,7 @@ def main():
     HEIGHT = root.winfo_screenheight()
     WIDTH = root.winfo_screenwidth()
 
-    # Constants for setting the color of the text (FG) and background (BG) and font
-    global TEXT_BG
-    global TEXT_FG
-    global FONT
-    TEXT_FG = '#abdbe3'
-    TEXT_BG = '#301E67'
-    FONT = ('Courier', 20)
-
-    # Constants of the server address and port
-    global HOST
-    global PORT
-    HOST = "18.224.63.138"
-    PORT = 5222
+    
 
     # Sets the window to be a quarter of our screen
     root.geometry(f'{int(WIDTH/2)}x{int(HEIGHT/2)}')
@@ -201,4 +261,23 @@ def main():
     root.mainloop()
     
 if __name__ == "__main__":
+    
+    # By default, this is the username
+    global username
+    username = "Anonymous"
+    
+    # Constants of the server address and port
+    global HOST
+    global PORT
+    HOST = "18.224.63.138"
+    PORT = 5222
+    
+    # Constants for setting the color of the text (FG) and background (BG) and font
+    global TEXT_BG
+    global TEXT_FG
+    global FONT
+    TEXT_FG = '#abdbe3'
+    TEXT_BG = '#301E67'
+    FONT = ('Courier', 20)
+    
     main()
