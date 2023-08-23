@@ -40,7 +40,8 @@ def room_gen(): # NOT CONFIGURED
 def settings():
     cls()
     global username
-    
+
+    print("           _                \n ___ ___  (_)__ ___ _  ___ _\n/ -_) _ \/ / _ `/  ' \/ _ `/\n\__/_//_/_/\_, /_/_/_/\_,_/ \n          /___/             \n\n")
     print(f'1) change username ("{username}")\n2) back')
     usinp = point_check(3)
     if usinp == 1: 
