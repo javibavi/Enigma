@@ -24,10 +24,10 @@ def room_join():
     
     # print open hosts
         
-def room_gen():
+def room_gen(): # NOT CONFIGURED
     while True:
-        roomname = input("enter room name")
-        password = input("enter room password")  
+        roomname = input("enter room name: ")
+        password = input("enter room password: ")  
         if len(roomname) < 16 and len(password) < 16:
             host_info = pickle.dumps([roomname, password])
             hostgen_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
