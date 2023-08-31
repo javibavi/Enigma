@@ -13,7 +13,7 @@ def point_check(max): # return user input if within a range
         try: usinp = int(input("$: "))
         except KeyboardInterrupt: quit() # Ctrl+C break
         except: continue
-        if 0 <= usinp < max: return usinp
+        if 0 <= usinp <= max: return usinp
 
 def room_join(): # List room names 
     # Request list of rooms from server
@@ -30,7 +30,7 @@ def room_join(): # List room names
         
     print('____________________')
     print('\nenter room to join (0 to exit) -')
-    usinp = point_check(len(open_hosts))
+    usinp = point_check(len(open_hosts)-1) # CHANGE -1 IF YOU CANT SELECT THIS LAST ROOM 
 
     # Exit if usinp == 0
     if usinp == 0: 
@@ -57,7 +57,7 @@ def room_gen():
             break
         print("room name and password must not be longer than 16 characters")
     print("server configured, type 1 to exit")
-    if point_check(2) == 1: main() 
+    if point_check(1) == 1: main() 
         
 def settings():
     cls()
@@ -65,7 +65,7 @@ def settings():
 
     print("           _                \n ___ ___  (_)__ ___ _  ___ _\n/ -_) _ \/ / _ `/  ' \/ _ `/\n\__/_//_/_/\_, /_/_/_/\_,_/ \n          /___/             \n\n")
     print(f'1) change username ("{username}")\n2) back')
-    usinp = point_check(3)
+    usinp = point_check(2)
     if usinp == 1: 
         username = input("enter username: ")
         settings()
@@ -78,7 +78,7 @@ def main():
     print("           _                \n ___ ___  (_)__ ___ _  ___ _\n/ -_) _ \/ / _ `/  ' \/ _ `/\n\__/_//_/_/\_, /_/_/_/\_,_/ \n          /___/             \n\n")
     print('1) join a server\n2) create a server\n3) settings\n')
     
-    point = point_check(4)
+    point = point_check(3)
 
     if point == 1: room_join()
     if point == 2: room_gen()
