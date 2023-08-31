@@ -6,7 +6,7 @@ HOST = "18.224.63.138"
 PORT = 5222
 username = "anon"
 
-cls = lambda: os.system('cls')
+cls = lambda: os.system('cls' if os.name=='nt' else 'clear')
 
 def point_check(max):
     while True:
@@ -24,11 +24,13 @@ def room_join():
     
     # print open hosts
         
-def room_gen(): # NOT CONFIGURED
+def room_gen(): 
+    cls()
+    print("           _                \n ___ ___  (_)__ ___ _  ___ _\n/ -_) _ \/ / _ `/  ' \/ _ `/\n\__/_//_/_/\_, /_/_/_/\_,_/ \n          /___/             \n\n")
     while True:
         roomname = input("enter room name: ")
         password = input("enter room password: ")  
-        if len(roomname) < 16 and len(password) < 16:
+        if 0 < len(roomname) < 16 and 0 < len(password) < 16:
             host_info = pickle.dumps([roomname, password])
             hostgen_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             hostgen_socket.connect((HOST, PORT))
@@ -36,6 +38,8 @@ def room_gen(): # NOT CONFIGURED
             hostgen_socket.close()
             break
         print("room name and password must not be longer than 16 characters")
+    print("server configured, type 1 to exit")
+    if point_check(2) == 1: main() 
         
 def settings():
     cls()
