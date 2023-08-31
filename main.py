@@ -27,7 +27,6 @@ def room_join(): # List room names
     print('|     room name     |\n')
     for x, roomname in enumerate(open_hosts[1:]):
         print(f'{x+1}) {roomname[2]}')
-        
     print('____________________')
     print('\nenter room to join (0 to exit) -')
     usinp = point_check(len(open_hosts)-1) # CHANGE -1 IF YOU CANT SELECT THIS LAST ROOM 
