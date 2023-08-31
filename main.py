@@ -13,7 +13,7 @@ def point_check(max):
         try: usinp = int(input("$: "))
         except KeyboardInterrupt: quit()
         except: continue
-        if 0 < usinp < max: return usinp
+        if 0 <= usinp < max: return usinp
 
 def room_join():
     cls()
