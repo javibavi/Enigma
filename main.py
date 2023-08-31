@@ -8,20 +8,22 @@ username = "anon"
 
 cls = lambda: os.system('cls' if os.name=='nt' else 'clear')
 
-def point_check(max):
+def point_check(max): # return user input if within a range
     while True:
         try: usinp = int(input("$: "))
         except KeyboardInterrupt: quit()
         except: continue
         if 0 <= usinp < max: return usinp
 
-def room_join():
+def room_join(): # List room names 
+    # Request list of rooms from server
     cls()
     roomjoin_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     roomjoin_socket.connect((HOST, PORT))
     roomjoin_socket.sendall(b'roomrequest')
     open_hosts = pickle.loads(roomjoin_socket.recv(1024))
-    
+
+    # Print room names w/ formatting 
     print('|     room name     |\n')
     for x, roomname in enumerate(open_hosts[1:]):
         print(f'{x+1}) {roomname[2]}')
@@ -29,11 +31,13 @@ def room_join():
     print('____________________')
     print('\nenter room to join (0 to exit) -')
     usinp = point_check(len(open_hosts))
-    
+
+    # Exit if usinp == 0
     if usinp == 0: 
         roomjoin_socket.close()
         main()
-    
+
+    # Send request to server to delete room information 
     else:
         roomjoin_socket.sendall(b'deleterequest')
         roomjoin_socket.sendall(usinp.to_bytes())
