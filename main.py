@@ -11,7 +11,7 @@ cls = lambda: os.system('cls' if os.name=='nt' else 'clear')
 def point_check(max): # return user input if within a range
     while True:
         try: usinp = int(input("$: "))
-        except KeyboardInterrupt: quit()
+        except KeyboardInterrupt: quit() # Ctrl+C break
         except: continue
         if 0 <= usinp < max: return usinp
 
@@ -40,7 +40,7 @@ def room_join(): # List room names
     # Send request to server to delete room information 
     else:
         roomjoin_socket.sendall(b'deleterequest')
-        roomjoin_socket.sendall(usinp.to_bytes())
+        roomjoin_socket.sendall(usinp.to_bytes()) # Send room list index to server with deleterequest
     
 def room_gen(): 
     cls()
