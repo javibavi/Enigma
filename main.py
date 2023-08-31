@@ -40,6 +40,11 @@ def room_join(): # List room names
     else:
         roomjoin_socket.sendall(b'deleterequest')
         roomjoin_socket.sendall(usinp.to_bytes()) # Send room list index to server with deleterequest
+        # TRY:
+        # roomjoin_socket.sendall(b'deleterequest' + usinp.to_bytes())
+        # CODE FOR SERVER:
+        # if l[:11] == deleterequest:
+        #     del list(l[12:])
     
 def room_gen(): 
     cls()
