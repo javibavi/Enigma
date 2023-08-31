@@ -8,12 +8,12 @@ username = "anon"
 
 cls = lambda: os.system('cls' if os.name=='nt' else 'clear')
 
-def point_check(max, min):
+def point_check(max):
     while True:
         try: usinp = int(input("$: "))
         except KeyboardInterrupt: quit()
         except: continue
-        if min < usinp < max: return usinp
+        if 0 < usinp < max: return usinp
 
 def room_join():
     cls()
@@ -25,18 +25,18 @@ def room_join():
     print('|     room name     |\n')
     for x, roomname in enumerate(open_hosts[1:]):
         print(f'{x+1}) {roomname[2]}')
-    print('0 to exit')
+        
     print('____________________')
-    print('\nenter room to join -')
-    usinp = point_check(len(open_hosts), 1)
+    print('\nenter room to join (0 to exit) -')
+    usinp = point_check(len(open_hosts))
     
     if usinp == 0: 
         roomjoin_socket.close()
         main()
     
     else:
-        roomjoin_socket.sendall('deleterequest')
-        roomjoin_socket.sendall(usinp)
+        roomjoin_socket.sendall(b'deleterequest')
+        roomjoin_socket.sendall(usinp.to_bytes())
     
 def room_gen(): 
     cls()
@@ -53,7 +53,7 @@ def room_gen():
             break
         print("room name and password must not be longer than 16 characters")
     print("server configured, type 1 to exit")
-    if point_check(2, 0) == 1: main() 
+    if point_check(2) == 1: main() 
         
 def settings():
     cls()
@@ -61,7 +61,7 @@ def settings():
 
     print("           _                \n ___ ___  (_)__ ___ _  ___ _\n/ -_) _ \/ / _ `/  ' \/ _ `/\n\__/_//_/_/\_, /_/_/_/\_,_/ \n          /___/             \n\n")
     print(f'1) change username ("{username}")\n2) back')
-    usinp = point_check(3, 0)
+    usinp = point_check(3)
     if usinp == 1: 
         username = input("enter username: ")
         settings()
@@ -74,7 +74,7 @@ def main():
     print("           _                \n ___ ___  (_)__ ___ _  ___ _\n/ -_) _ \/ / _ `/  ' \/ _ `/\n\__/_//_/_/\_, /_/_/_/\_,_/ \n          /___/             \n\n")
     print('1) join a server\n2) create a server\n3) settings\n')
     
-    point = point_check(4, 0)
+    point = point_check(4)
 
     if point == 1: room_join()
     if point == 2: room_gen()
