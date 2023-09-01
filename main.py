@@ -1,6 +1,7 @@
 # TODO: room_gen structure needs the host to remain in a listening state for connections instead of just
 # creating the room and leaving it   
-# TODO: fix the byte decoding in server code
+# TODO: fix "ran out of input" on client and similiar error on server, likely issue with incorrect stack on data transfer TRY: db commenting the if deleterequest
+# TODO: remove all db lines, including the fake hostlist in the server 
 
 import socket
 import pickle 
@@ -42,10 +43,10 @@ def room_join(): # List room names
 
     # Send request to server to delete room information 
     else:
+        deleterequest = [b'deleterequest', usinp]
         roomjoin_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         roomjoin_socket.connect((HOST, PORT))
-        roomjoin_socket.sendall(b'deleterequest')
-        roomjoin_socket.sendall(usinp.to_bytes()) # Send room list index to server with deleterequest
+        roomjoin_socket.sendall(pickle.dumps(deleterequest)) # Send room list index to server with deleterequest
         roomjoin_socket.close()
     
 def room_gen(): 
