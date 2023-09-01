@@ -1,29 +1,55 @@
+# testing successful push i hate git i will strangle the guy who made this fucking shitty thing die 
+# TODO: room_gen structure needs the host to remain in a listening state for connections instead of just
+# creating the room and leaving it   
+# TODO: fix "ran out of input" on client and similiar error on server, likely issue with incorrect stack on data transfer TRY: db commenting the if deleterequest
+# TODO: remove all db lines, including the fake hostlist in the server 
+
 import socket
 import pickle 
 import os
 
-HOST = "18.224.63.138"
-PORT = 5222
+HOST = "3.21.248.228"
+PORT = 9236
 username = "anon"
 
 cls = lambda: os.system('cls' if os.name=='nt' else 'clear')
 
-def point_check(max):
+def point_check(max): # return user input if within a range
     while True:
         try: usinp = int(input("$: "))
-        except KeyboardInterrupt: quit()
+        except KeyboardInterrupt: quit() # ^C break
         except: continue
-        if 0 < usinp < max: return usinp
+        if 0 <= usinp <= max: return usinp
 
-def room_join():
+def room_join(): # List room names 
+    # Request list of rooms from server
     cls()
-    roomjoin_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    roomjoin_socket.connect((HOST, PORT))
-    roomjoin_socket.sendall(b'roomrequest')
-    open_hosts = roomjoin_socket.recv(1024)
+    roomrequest_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    roomrequest_socket.connect((HOST, PORT))
+    roomrequest_socket.sendall(b'roomrequest')
+    open_hosts = pickle.loads(roomrequest_socket.recv(1024))
+    roomrequest_socket.close()
+
+    # Print room names w/ formatting 
+    print('|     room name     |\n')
+    for x, roomname in enumerate(open_hosts[1:]):
+        print(f'{x+1}) {roomname[2]}')
+    print('____________________')
+    print('\nenter room to join (0 to exit) -')
+    usinp = point_check(len(open_hosts)-1) # db change -1 if last room cant be selected
+
+    # Exit if usinp == 0
+    if usinp == 0: 
+        main()
+
+    # Send request to server to delete room information 
+    else:
+        deleterequest = [b'deleterequest', usinp]
+        roomjoin_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        roomjoin_socket.connect((HOST, PORT))
+        roomjoin_socket.sendall(pickle.dumps(deleterequest)) # Send room list index to server with deleterequest
+        roomjoin_socket.close()
     
-    # print open hosts
-        
 def room_gen(): 
     cls()
     print("           _                \n ___ ___  (_)__ ___ _  ___ _\n/ -_) _ \/ / _ `/  ' \/ _ `/\n\__/_//_/_/\_, /_/_/_/\_,_/ \n          /___/             \n\n")
