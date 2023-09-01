@@ -20,7 +20,7 @@ def point_check(max): # return user input if within a range
         except: continue
         if 0 <= usinp <= max: return usinp
 
-def room_join(): # List room names 
+def roomlist_load(): # List room names 
     # Request list of rooms from server
     cls()
     roomrequest_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -62,8 +62,8 @@ def room_gen():
             hostgen_socket.sendall(host_info)
             hostgen_socket.close()
             break
-        print("room name and password must not be longer than 16 characters")
-    print("room configured, type 1 to exit")
+        print("room name and/or password must not be longer than 16 characters\n")
+    print("room configured, type 0 to exit")
     if point_check(1) == 1: main() 
         
 def settings():
@@ -87,7 +87,7 @@ def main():
     
     point = point_check(3)
 
-    if point == 1: room_join()
+    if point == 1: roomlist_load()
     if point == 2: room_gen()
     if point == 3: settings()
     
