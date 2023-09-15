@@ -1,10 +1,11 @@
 from tkinter import *
-from os import getcwd
+import os
 from tkinter import messagebox
 import socket
 import pickle # used to encode/decode information before it is sent to the server 
 from load_server_frames import *
 import threading
+from gui import Gui
 
 # Function for the host to submit their info
 def host_submit():
@@ -35,44 +36,41 @@ def config_server():
     
     # Creating window for creating a server
     global config_window
-    config_window = Tk()
-    config_window.geometry(f'{int(WIDTH/2)}x{int(HEIGHT/2)}')
-    config_window.config(bg='#03001C')
-    config_window.title("Enigma Server Creation")
-    config_window.resizable(width=False, height=False)
+    config_window = Gui(GEOMETRY, WINDOW_BG, "Enigma Server Creation")
+    
     
     # Creating the label for the "title"
-    config_label = Label(config_window, text="Enter A Room Name and (Optional) Password", font=FONT,
+    config_label = Label(config_window.window, text="Enter A Room Name and (Optional) Password", font=FONT,
                          fg=TEXT_FG, bg=TEXT_BG, width = 50)
     config_label.pack()
     
     # Creating a label to have the user enter a room name
-    config_room_name_label = Label(config_window, text="Room Name: ",
+    config_room_name_label = Label(config_window.window, text="Room Name: ",
                                    font=FONT, fg=TEXT_FG, bg=TEXT_BG, 
                                    width=50)
     config_room_name_label.pack()
     
     # Creating the entry box for room name
     global config_room_name_entry
-    config_room_name_entry = Entry(config_window, fg=TEXT_FG, bg=TEXT_BG, font=FONT, width=50)
+    config_room_name_entry = Entry(config_window.window, fg=TEXT_FG, bg=TEXT_BG, font=FONT, width=50, highlightbackground='black')
     config_room_name_entry.pack()
     
     # Creating a password label
-    config_password_label = Label(config_window, text="Password: ", width=50, bg=TEXT_BG, fg=TEXT_FG, font=FONT)
+    config_password_label = Label(config_window.window, text="Password: ", width=50, bg=TEXT_BG, fg=TEXT_FG, font=FONT)
     config_password_label.pack()
     
     # Creating the entry box for password
     global config_password_entry
-    config_password_entry = Entry(config_window, width=50, fg=TEXT_FG, bg=TEXT_BG, font=FONT)
+    config_password_entry = Entry(config_window.window, width=50, fg=TEXT_FG, bg=TEXT_BG, font=FONT, highlightbackground="black")
     config_password_entry.pack()
     
     # Creating a submit button
-    room_submit_button = Button(config_window, width=50, font=FONT, fg=TEXT_FG, bg=TEXT_BG, text="Submit", command=host_submit,
+    room_submit_button = Button(config_window.window, width=48, font=FONT, fg=TEXT_FG, bg=TEXT_BG, text="Submit", command=host_submit,
                                 activebackground=TEXT_BG, activeforeground=TEXT_FG)
     room_submit_button.pack()
     
     # Go back to home screen
-    back_to_home = Button(config_window, width=50, font=FONT, fg=TEXT_FG, bg=TEXT_BG, 
+    back_to_home = Button(config_window.window, width=48, font=FONT, fg=TEXT_FG, bg=TEXT_BG, 
                           activebackground=TEXT_BG, activeforeground=TEXT_FG, command=main,
                           text="Back to home screen")
     back_to_home.pack()
@@ -128,11 +126,7 @@ def load_server():
     
     # Creating blank window to display all of the servers
     global join_window
-    join_window = Tk()
-    join_window.geometry(f'{int(WIDTH/2)}x{int(HEIGHT/2)}')
-    join_window.config(bg='#03001C')
-    join_window.title("Enigma Server List")
-    join_window.resizable(width=False, height=False)
+    join_window = Gui(GEOMETRY, WINDOW_BG, "Enigma Server List")
     
     
     
@@ -164,7 +158,7 @@ def load_server():
     
     
     # Mainloop because without this it breaks
-    join_window.mainloop()
+    join_window.window.mainloop()
     
     
 
@@ -181,12 +175,17 @@ def set_username():
 def settings():
     
     # Config settings to make our window more vertical and unresizeable
+    
     settings_window = Toplevel()
     settings_window.title("Enigma Settings")
-    settings_window.iconphoto(True, PhotoImage(file=f'{getcwd()}\\Kirby.png'))
     settings_window.geometry(f'{int(WIDTH/5)}x{int(HEIGHT/2)}')
-    settings_window.config(bg='#03001C')
+    settings_window.config(bg=WINDOW_BG)
     settings_window.resizable(width=False, height=False)
+    
+    if os.name == 'nt':
+        
+        settings_window.iconphoto(True, PhotoImage(file=f'{getcwd()}\\Kirby.png'))
+        
     
     # Label to guide the user to enter a username
     username_label = Label(settings_window, text="Enter a username:  ", font=FONT, fg=TEXT_FG, bg=TEXT_BG)
@@ -195,7 +194,7 @@ def settings():
     # Username entry that allows the user to pick the username
     # By default this is set to "Anonymous"
     global username_entry
-    username_entry = Entry(settings_window, font=FONT, fg=TEXT_FG, bg='#03001C')
+    username_entry = Entry(settings_window, font=FONT, fg=TEXT_FG, bg='#03001C', width=19)
     username_entry.pack()
     username_entry.insert(0, username)
     
@@ -214,7 +213,7 @@ def main():
     
     # Try to destroy the other screen if we decide to go back to home screen
     try:
-        config_window.destroy()
+        config_window.window.destroy()
     except Exception:
         pass
     
@@ -227,19 +226,23 @@ def main():
     # Constants used for taking the height of the users screen
     global HEIGHT
     global WIDTH
+    global GEOMETRY
     HEIGHT = root.winfo_screenheight()
     WIDTH = root.winfo_screenwidth()
+    GEOMETRY = f'{int(WIDTH/2)}x{int(HEIGHT/2)}'
 
     
 
     # Sets the window to be a quarter of our screen
-    root.geometry(f'{int(WIDTH/2)}x{int(HEIGHT/2)}')
+    root.geometry(GEOMETRY)
 
     # Config stuff for background, title, image, etc.
     root.title("Enigma")
     root.config(bg='#03001C')
     root.resizable(width=False, height=False)
-    root.iconphoto(True, PhotoImage(file=f'{getcwd()}\\Kirby.png'))
+    
+    if os.name == 'nt': 
+        root.iconphoto(True, PhotoImage(file=f'{getcwd()}\\Kirby.png'))
 
 
     # Button for creating a server. Binded to create_server function
@@ -276,8 +279,10 @@ if __name__ == "__main__":
     global TEXT_BG
     global TEXT_FG
     global FONT
+    global WINDOW_BG
     TEXT_FG = '#abdbe3'
     TEXT_BG = '#301E67'
     FONT = ('Courier', 20)
+    WINDOW_BG = '#03001C'
     
     main()

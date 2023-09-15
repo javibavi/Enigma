@@ -1,12 +1,15 @@
 from tkinter import *
 from tkinter import Frame
+import tkinter.ttk as ttk
+
+
 
 # Class for storing server info and then displaying it in multiple frames
 class serverInfo:
     
     
     # Two params, one for what frame to add this frame to and another 
-    def __init__(self, master, info, row, column):
+    def __init__(self, master: Frame, info: list, row: int, column: int):
         
         self.frame = Frame(master, bg='#03001C')
         
@@ -32,31 +35,31 @@ def join_server():
         
         
 if __name__ == "__main__":
-    tk = Tk()
+    root = Tk()
+    root.title("Scrollbar for a Frame of Frames")
+    root.geometry("400x300")
 
-    frame = Frame(tk)
-    frame.pack()
+    canvas = Canvas(root)
+    canvas.pack(side="left", fill="both", expand=True)
 
-    scrollbar = Scrollbar(frame, orient='vertical')
-    scrollbar.grid(row=0, column=3)
+    scrollbar = ttk.Scrollbar(root, orient="vertical", command=canvas.yview)
+    scrollbar.pack(side="right", fill="y")
 
+    frame_container = Frame(canvas)
+    canvas.create_window((0, 0), window=frame_container, anchor="nw")
 
+    frame_container.bind("<Configure>", lambda event, canvas=canvas: canvas.configure(scrollregion=canvas.bbox("all")))
 
+    row = 0
 
-    server = serverInfo(frame, ['hot dogs', 'fake ip', 'servername'], 0, 0)
+    for i in range(20):
+        serverInfo(frame_container, "test", row, 0)
+        row+=1
+        
 
+    canvas.configure(yscrollcommand=scrollbar.set)
 
+    root.mainloop()
+                
 
-    server1 = serverInfo(frame, ['hot dogs', 'fake ip', 'servername'], 0, 1)
-    server2 = serverInfo(frame, ['hot dogs', 'fake ip', 'servername'], 0, 2)
-    server3 = serverInfo(frame, ['hot dogs', 'fake ip', 'servername'], 1, 0)
-    server4 = serverInfo(frame, ['hot dogs', 'fake ip', 'servername'], 1, 1)
-    server5 = serverInfo(frame, ['hot dogs', 'fake ip', 'servername'], 1, 2)
-    server6 = serverInfo(frame, ['hot dogs', 'fake ip', 'servername'], 2, 0)
-    server7 = serverInfo(frame, ['hot dogs', 'fake ip', 'servername'], 2, 1)
-
-
-    tk.mainloop()
-            
-
-            
+                

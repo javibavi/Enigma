@@ -1,9 +1,10 @@
 from tkinter import *
+import os
 
 
 class Gui:
     
-    def __init__(self, geometry: str, bgcolor: str, title: str, icon: PhotoImage):
+    def __init__(self, geometry: str, bgcolor: str, title: str):
         
         self.window = Tk()
         
@@ -13,7 +14,10 @@ class Gui:
         
         self.window.title(title)
         
-        self.window.iconphoto(True, icon)
+        self.window.resizable(height=False, width=False)
+        
+        if os.name == 'nt':
+            self.window.iconphoto(True, PhotoImage(file=f'{getcwd()}\\Kirby.png'))
     
     def call(self):
         
