@@ -182,9 +182,10 @@ def settings():
     settings_window.config(bg=WINDOW_BG)
     settings_window.resizable(width=False, height=False)
     
+    # Icon photos only work on windows
     if os.name == 'nt':
         
-        settings_window.iconphoto(True, PhotoImage(file=f'{getcwd()}\\Kirby.png'))
+        settings_window.iconphoto(True, PhotoImage(file=f'{os.getcwd()}\\Kirby.png'))
         
     
     # Label to guide the user to enter a username
@@ -241,8 +242,9 @@ def main():
     root.config(bg='#03001C')
     root.resizable(width=False, height=False)
     
+    # Icon photos only work on windows
     if os.name == 'nt': 
-        root.iconphoto(True, PhotoImage(file=f'{getcwd()}\\Kirby.png'))
+        root.iconphoto(True, PhotoImage(file=f'{os.getcwd()}\\Kirby.png'))
 
 
     # Button for creating a server. Binded to create_server function
